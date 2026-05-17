@@ -24,3 +24,5 @@ data/*.csv
 Thumbs.dbgo1.22.6.linux-amd64.tar.gz
 go1.22.6.linux-amd64.tar.gz
 repomix-output.xml
+uv.lock
+pyproject.toml
