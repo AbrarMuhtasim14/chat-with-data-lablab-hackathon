@@ -1,0 +1,26 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Data (if CSVs are large / sensitive)
+data/*.csv
+
+# OS
+.DS_Store
+Thumbs.dbgo1.22.6.linux-amd64.tar.gz
+go1.22.6.linux-amd64.tar.gz
+repomix-output.xml
