@@ -422,21 +422,96 @@ def _lobster_trap_inspect(question: str) -> dict:
 
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
-        output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
+        stdout = (result.stdout or "").strip()
+        stderr = (result.stderr or "").strip()
+        combined = (stdout + "\n" + stderr).strip()
 
-        # Treat non-zero exit as blocked; also scan for common deny keywords.
-        blocked = (result.returncode != 0) or ("DENY" in output) or ("BLOCK" in output)
+        verdict_data = _parse_lobstertrap_output(stdout, stderr, result.returncode)
 
         return {
-            "is_safe": not blocked,
-            "risk_score": 100 if blocked else 0,
-            "reason": output if blocked else "Clean",
-            "raw_output": output,
+            "is_safe": verdict_data["is_safe"],
+            "risk_score": verdict_data["risk_score"],
+            "reason": verdict_data["reason"],
+            "raw_output": combined,
+            "exit_code": result.returncode,
         }
     except subprocess.TimeoutExpired:
         return {"is_safe": True, "risk_score": 0, "reason": "LobsterTrap timeout (fallback allow)"}
     except Exception as e:
         return {"is_safe": True, "risk_score": 0, "reason": f"LobsterTrap error: {e} (fallback allow)"}
+
+
+def _parse_lobstertrap_output(stdout: str, stderr: str, returncode: int) -> dict:
+    """
+    Parse LobsterTrap's verdict from its output.
+
+    Robust to multiple output shapes:
+      1. JSON object on stdout (current binary behavior). Fields we care about:
+           - verdict / action  : "DENY", "ALLOW", "HUMAN_REVIEW", "LOG"
+           - risk_score        : 0.0–1.0
+           - deny_message      : human-readable explanation if blocked
+      2. Plain text containing "[LOBSTER TRAP] Blocked: ..." lines.
+      3. Non-zero exit code (treated as block).
+    """
+    import json
+
+    # Defaults: ALLOW
+    is_safe = True
+    risk_score = 0
+    reason = "Clean"
+
+    # Path 1: try JSON
+    parsed = None
+    if stdout:
+        try:
+            parsed = json.loads(stdout)
+        except Exception:
+            # Some tools concatenate multiple JSON objects; try the first one
+            try:
+                first_brace = stdout.find("{")
+                if first_brace >= 0:
+                    parsed = json.loads(stdout[first_brace:])
+            except Exception:
+                parsed = None
+
+    if isinstance(parsed, dict):
+        verdict = str(parsed.get("verdict") or parsed.get("action") or "").upper()
+        risk = parsed.get("risk_score")
+        deny_msg = parsed.get("deny_message") or parsed.get("reason") or ""
+
+        if isinstance(risk, (int, float)):
+            risk_score = int(round(float(risk) * 100))
+
+        # Block on explicit DENY, or if risk_score >= 0.6 (matches policy's review_high_risk),
+        # or if any rule fired with a deny_message.
+        if verdict in ("DENY", "BLOCK", "DENIED", "BLOCKED"):
+            is_safe = False
+            reason = deny_msg or f"Verdict: {verdict}"
+        elif verdict == "HUMAN_REVIEW":
+            # Fail closed: in production we'd queue this; for now treat as block.
+            is_safe = False
+            reason = deny_msg or "Flagged for human review (treating as block)"
+        elif isinstance(risk, (int, float)) and float(risk) >= 0.6:
+            is_safe = False
+            reason = deny_msg or f"High risk score: {risk}"
+        elif deny_msg and "[LOBSTER TRAP] Blocked" in deny_msg:
+            is_safe = False
+            reason = deny_msg
+        else:
+            is_safe = True
+            reason = "Clean"
+        return {"is_safe": is_safe, "risk_score": risk_score, "reason": reason}
+
+    # Path 2: text-based fallback
+    combined = (stdout + "\n" + stderr).strip()
+    if "[LOBSTER TRAP] Blocked" in combined or "DENY" in combined.upper() or "BLOCK" in combined.upper():
+        return {"is_safe": False, "risk_score": 100, "reason": combined.splitlines()[0] if combined else "Blocked"}
+
+    # Path 3: exit code
+    if returncode != 0:
+        return {"is_safe": False, "risk_score": 100, "reason": f"non-zero exit code {returncode}: {combined[:200]}"}
+
+    return {"is_safe": True, "risk_score": 0, "reason": "Clean"}
 
 
 # ════════════════════════════════════════════════

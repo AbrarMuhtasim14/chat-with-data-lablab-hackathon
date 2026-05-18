@@ -70,18 +70,57 @@ def run_inspect(question: str) -> dict:
         cmd = [str(BINARY), "inspect", "--policy", str(POLICY), question]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
-        output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
-        blocked = (result.returncode != 0) or ("DENY" in output) or ("BLOCK" in output)
+        stdout = result.stdout or ""
+        stderr = result.stderr or ""
+        verdict = _classify(stdout, stderr, result.returncode)
         return {
             "returncode": result.returncode,
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "verdict": "BLOCKED" if blocked else "ALLOWED",
+            "stdout": stdout,
+            "stderr": stderr,
+            "verdict": verdict,
         }
     except subprocess.TimeoutExpired:
         return {"returncode": None, "stdout": "", "stderr": "timeout", "verdict": "TIMEOUT"}
     except Exception as exc:
         return {"returncode": None, "stdout": "", "stderr": str(exc), "verdict": "ERROR"}
+
+
+def _classify(stdout: str, stderr: str, returncode: int) -> str:
+    """Mirror the agent's verdict logic so this page agrees with what the chat blocks."""
+    import json as _json
+    try:
+        # Try strict JSON, then JSON starting at first '{'
+        text = stdout.strip()
+        try:
+            payload = _json.loads(text)
+        except Exception:
+            idx = text.find("{")
+            payload = _json.loads(text[idx:]) if idx >= 0 else None
+    except Exception:
+        payload = None
+
+    if isinstance(payload, dict):
+        v = str(payload.get("verdict") or payload.get("action") or "").upper()
+        risk = payload.get("risk_score")
+        if v in ("DENY", "BLOCK", "DENIED", "BLOCKED"):
+            return "BLOCKED"
+        if v == "HUMAN_REVIEW":
+            return "BLOCKED"
+        if isinstance(risk, (int, float)) and float(risk) >= 0.6:
+            return "BLOCKED"
+        deny_msg = str(payload.get("deny_message") or payload.get("reason") or "")
+        if "[LOBSTER TRAP] Blocked" in deny_msg:
+            return "BLOCKED"
+        if v == "ALLOW" or v == "ALLOWED":
+            return "ALLOWED"
+        # JSON present but no decisive field — fall through
+
+    combined = (stdout + "\n" + stderr).upper()
+    if "[LOBSTER TRAP] BLOCKED" in combined or "DENY" in combined or "BLOCK" in combined:
+        return "BLOCKED"
+    if returncode != 0:
+        return "BLOCKED"
+    return "ALLOWED"
 
 
 if st.button("▶ Run canary tests", type="primary", use_container_width=True):
@@ -90,14 +129,22 @@ if st.button("▶ Run canary tests", type="primary", use_container_width=True):
             res = run_inspect(question)
             verdict = res["verdict"]
             if verdict == "BLOCKED":
-                st.error(f"Verdict: {verdict}")
+                st.error(f"Wrapper verdict: {verdict}")
             elif verdict == "ALLOWED":
-                st.success(f"Verdict: {verdict}")
+                st.success(f"Wrapper verdict: {verdict}")
             else:
-                st.warning(f"Verdict: {verdict}")
+                st.warning(f"Wrapper verdict: {verdict}")
             st.write(f"- exit code: `{res['returncode']}`")
             if res["stdout"]:
-                st.code(res["stdout"], language="text")
+                # Try to render as JSON if possible — easier to read full payload.
+                import json as _json
+                try:
+                    payload = _json.loads(res["stdout"])
+                    st.caption("stdout (parsed as JSON)")
+                    st.json(payload)
+                except Exception:
+                    st.caption("stdout (raw)")
+                    st.code(res["stdout"], language="text")
             if res["stderr"]:
                 st.caption("stderr")
                 st.code(res["stderr"], language="text")
@@ -113,14 +160,21 @@ if st.button("Inspect"):
         res = run_inspect(custom)
         verdict = res["verdict"]
         if verdict == "BLOCKED":
-            st.error(f"Verdict: {verdict}")
+            st.error(f"Wrapper verdict: {verdict}")
         elif verdict == "ALLOWED":
-            st.success(f"Verdict: {verdict}")
+            st.success(f"Wrapper verdict: {verdict}")
         else:
-            st.warning(f"Verdict: {verdict}")
+            st.warning(f"Wrapper verdict: {verdict}")
         st.write(f"- exit code: `{res['returncode']}`")
         if res["stdout"]:
-            st.code(res["stdout"], language="text")
+            import json as _json
+            try:
+                payload = _json.loads(res["stdout"])
+                st.caption("stdout (parsed as JSON)")
+                st.json(payload)
+            except Exception:
+                st.caption("stdout (raw)")
+                st.code(res["stdout"], language="text")
         if res["stderr"]:
             st.caption("stderr")
             st.code(res["stderr"], language="text")
