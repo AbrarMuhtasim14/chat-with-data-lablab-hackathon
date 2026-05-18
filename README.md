@@ -9,16 +9,8 @@ app_file: frontend/dashboard.py
 python_version: "3.11"
 pinned: false
 ---
-```markdown
----
-title: Chat-with-Data (AtliQ Intelligence)
-emoji: 📊
-colorFrom: indigo
-colorTo: purple
-sdk: streamlit
-app_file: frontend/dashboard.py
-pinned: false
----
+
+
 
 # Chat-with-Data — Enterprise Intelligence Copilot (AtliQ Hospitality)
 
