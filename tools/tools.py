@@ -10,7 +10,6 @@ Two layers:
 import pandas as pd
 import psycopg2
 import re
-from crewai.tools import tool
 from utils.config import CLEAN_DB_URI, METRIC_LIBRARY
 
 

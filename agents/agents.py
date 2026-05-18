@@ -391,22 +391,32 @@ def _lobster_trap_inspect(question: str) -> dict:
 
     Expected files at project root:
       - ./lobstertrap
-      - ./lobstertrap_policy.yaml   (optional)
+      - ./configs/default_policy.yaml   (optional)
 
-    If binary isn't present, we fall back to allow (so the app still works).
+    If binary isn't present or not executable, we fall back to allow.
     """
     project_root = os.path.dirname(os.path.dirname(__file__))
     binary_path = os.path.join(project_root, "lobstertrap")
-    policy_path = os.path.join(project_root, "lobstertrap_policy.yaml")
+    policy_path = os.path.join(project_root, "configs", "default_policy.yaml")
 
     if not os.path.exists(binary_path):
         return {"is_safe": True, "risk_score": 0, "reason": "LobsterTrap binary not found (fallback allow)"}
 
+    # Ensure the ELF binary has execute permission. On Linux deployments
+    # (HF Spaces, Streamlit Cloud, Codespaces) the file may be checked in
+    # without the +x bit, which causes random PermissionError failures.
+    try:
+        import stat
+        st = os.stat(binary_path)
+        if not (st.st_mode & stat.S_IXUSR):
+            os.chmod(binary_path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    except Exception:
+        pass
+
     # Base command: lobstertrap inspect "<question>"
     cmd = [binary_path, "inspect", question]
 
-    # If you have a policy file, use it.
-    # LobsterTrap docs mention a default policy YAML at configs/default_policy.yaml. :contentReference[oaicite:2]{index=2}
+    # If a policy file is shipped, use it.
     if os.path.exists(policy_path):
         cmd = [binary_path, "inspect", "--policy", policy_path, question]
 

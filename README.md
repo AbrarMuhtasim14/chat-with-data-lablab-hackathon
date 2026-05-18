@@ -4,8 +4,10 @@ emoji: 🏨
 colorFrom: blue
 colorTo: purple
 sdk: streamlit
+sdk_version: 1.39.0
 app_file: frontend/dashboard.py
 python_version: "3.11"
+pinned: false
 ---
 # Chat with your data — Enterprise AI Analytics Platform
 
