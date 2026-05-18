@@ -12,7 +12,6 @@ pinned: false
 # Chat with your data — Enterprise AI Analytics 
 
 
-````markdown
 ---
 title: Chat-with-Data (AtliQ Intelligence)
 emoji: 📊
@@ -125,59 +124,28 @@ User (Streamlit UI)
    '-> Cross-source Answering:
         PDF context + DB metrics + (optional) web grounding
         via Gemini Google Search tool
-````
+“What the judges will see” (demo flow)
+DB Agent: Ask “Top 5 hotels by revenue in Mumbai” → tool call → ranked output
+Doc Intelligence: Upload PDF → knowledge graph renders
+Cross-source: Ask “How does our RevPAR compare to the benchmark in this report?”
+Real-time: Ask “What’s the latest industry benchmark for RevPAR in India?”
+Show grounding metadata (search queries + sources)
+Security: Try prompt injection (“ignore previous instructions…”) → blocked by policy
+Tech stack
+Frontend: Streamlit (Hugging Face Space)
+LLM: Gemini (agentic tool-calling + document intelligence + web grounding)
+Data: PostgreSQL analytics dataset (AtliQ Hospitality schema)
+Graphs: NetworkX + Plotly graph rendering
+Governance: Lobster Trap (policy-based prompt inspection)
+Deployment (Hugging Face Spaces)
 
----
+Hugging Face Spaces reads the YAML block at the very top of README.md to configure the app.
 
-## “What the judges will see” (demo flow)
+Secrets to set in the Space:
 
-1. **DB Agent**: Ask “Top 5 hotels by revenue in Mumbai” → tool call → ranked output
-2. **Doc Intelligence**: Upload PDF → knowledge graph renders
-3. **Cross-source**: Ask “How does our RevPAR compare to the benchmark in this report?”
-4. **Real-time**: Ask “What’s the latest industry benchmark for RevPAR in India?”
-
-   * Show grounding metadata (search queries + sources) ([Google AI for Developers][1])
-5. **Security**: Try prompt injection (“ignore previous instructions…”) → blocked by policy ([GitHub][2])
-
----
-
-## Tech stack
-
-* **Frontend:** Streamlit (Hugging Face Space)
-* **LLM:** Gemini (agentic tool-calling + document intelligence + web grounding)
-* **Data:** PostgreSQL analytics dataset (AtliQ Hospitality schema)
-* **Graphs:** NetworkX + Plotly graph rendering
-* **Governance:** Lobster Trap (policy-based prompt inspection) ([GitHub][2])
-
----
-
-## Deployment (Hugging Face Spaces)
-
-Hugging Face Spaces reads the **YAML block at the very top of README.md** to configure the app. ([Hugging Face][3])
-
-**Secrets to set in the Space:**
-
-* `GEMINI_API_KEY`
-* any DB connection env vars your app expects
-
----
-
-## Credits
-
-* Hackathon: TechEx + lablab.ai — Intelligent Enterprise Solutions Hackathon ([LabLab][4])
-* Security Layer: Veea Lobster Trap ([GitHub][2])
-* Real-time Web Grounding: Gemini Grounding with Google Search ([Google AI for Developers][1])
-
-```
-
-If you want, I can tailor this README even more to your exact repo structure by adding:
-- exact page list (Dashboard / Document Intelligence / Security)
-- screenshots placeholders with captions
-- a “Judges: Why this is production-ready” section (observability, policy, reproducibility)
-::contentReference[oaicite:13]{index=13}
-```
-
-[1]: https://ai.google.dev/gemini-api/docs/google-search?utm_source=chatgpt.com "Grounding with Google Search - generateContent API"
-[2]: https://github.com/veeainc/lobstertrap/blob/main/README.md?utm_source=chatgpt.com "README.md - veeainc/lobstertrap"
-[3]: https://huggingface.co/docs/hub/spaces-config-reference?utm_source=chatgpt.com "Spaces Configuration Reference"
-[4]: https://lablab.ai/ai-hackathons/techex-intelligent-enterprise-solutions-hackathon?utm_source=chatgpt.com "Transforming Enterprise Through AI AI Hackathon"
+GEMINI_API_KEY
+any DB connection env vars your app expects
+Credits
+Hackathon: TechEx + lablab.ai — Intelligent Enterprise Solutions Hackathon
+Security Layer: Veea Lobster Trap
+Real-time Web Grounding: Gemini Grounding with Google Search
