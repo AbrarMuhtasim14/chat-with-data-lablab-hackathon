@@ -9,560 +9,175 @@ app_file: frontend/dashboard.py
 python_version: "3.11"
 pinned: false
 ---
-# Chat with your data — Enterprise AI Analytics Platform
+# Chat with your data — Enterprise AI Analytics 
 
-> An enterprise-grade "Chat with Your Data" system that enables stakeholders to query hotel performance data in plain English, backed by a deterministic metrics engine, real-time KPI monitoring, and automated anomaly detection.
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-FF4B4B?logo=streamlit)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?logo=supabase)
-![LLM](https://img.shields.io/badge/LLM-Grok%204.1-000000?logo=x)
-![License](https://img.shields.io/badge/License-MIT-green)
+````markdown
+---
+title: Chat-with-Data (AtliQ Intelligence)
+emoji: 📊
+colorFrom: indigo
+colorTo: purple
+sdk: streamlit
+app_file: frontend/dashboard.py
+pinned: false
+---
 
-<p align="center">
-  <a href="#-live-demo">Live Demo</a> •
-  <a href="#-features">Features</a> •
-  <a href="#%EF%B8%8F-architecture">Architecture</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-kpi-reference">KPI Reference</a>
-</p>
+# Chat-with-Data — Enterprise Intelligence Copilot (AtliQ Hospitality)
+
+Turn **live enterprise data + proprietary documents + real-time web benchmarks** into clear, decision-ready insights — with **agent security & governance** built in.
+
+**Live demo:** Hugging Face Space (this repo deploys here)  
+**Hackathon alignment:** TechEx “Intelligent Enterprise Solutions” — **Track 4: Data & Intelligence** + **Gemini Award** + **Veea Agent Security & AI Governance** :contentReference[oaicite:0]{index=0}
 
 ---
 
-## 🎯 Live Demo
+## The problem this solves
 
-🔗 **[Launch App on Streamlit Cloud](https://hospitality-acwk5lhj7j9dus5chmjbrs.streamlit.app/))**
+Enterprises don’t have a “data problem” — they have a **decision latency problem**:
 
-### Dashboard Preview
+- KPI answers are scattered across dashboards, SQL notebooks, and reporting cycles.
+- Industry PDFs (benchmarks, competitor reports) are **hard to query** and rarely connected to internal metrics.
+- When a question needs **fresh external context**, teams either guess or spend hours searching.
+- AI assistants can hallucinate numbers or be tricked by prompt injection, which makes security teams say **“no”**.
 
-<!-- 
-  HOW TO ADD YOUR IMAGES:
-  1. Create a folder called "assets/images/" in the root of your repo
-  2. Take screenshots of your running app and save with the filenames below
-  3. Git add, commit, push — GitHub will render them automatically
-  Suggested tool for ER diagrams: https://dbdiagram.io or pgAdmin
--->
-
-![Executive Dashboard](assets/images/dashboard_overview.png)
-*Executive Dashboard — KPI cards, revenue trends, and city performance*
-
-<details>
-<summary>📸 More Screenshots</summary>
-
-<br>
-
-![Chat with Data](assets/images/chat_with_data.png)
-*AI Chat Interface — natural language queries with formatted business answers*
-
-![KPI Monitoring](assets/images/kpi_monitoring.png)
-*KPI Monitoring — anomaly detection alerts and property health scores*
-
-</details>
+This project makes analytics **conversational, cross-source, verifiable, and safe**.
 
 ---
 
-## 📌 Problem Statement
+## What this project does (in one sentence)
 
-In large hospitality organizations, performance data is spread across multiple tables with complex relationships. Business users need answers to questions like:
-
-- *"What is our RevPAR for luxury hotels in Mumbai this month?"*
-- *"Which booking platform has the highest cancellation rate?"*
-- *"Compare week 25 vs week 29 occupancy across cities"*
-
-Traditionally, each question requires an analyst to manually write SQL, build a report, and deliver it — a process that takes hours per query and doesn't scale.
-
-**This platform solves that by enabling anyone to ask business questions in plain English and receive accurate, data-driven answers in seconds.**
+**Chat-with-Data** is an enterprise-grade analytics agent that answers natural language questions using:
+1) deterministic database tools, 2) document intelligence + knowledge graphs, and 3) Gemini Google Search grounding for real-time facts — protected by Lobster Trap policy enforcement.
 
 ---
 
-## ✨ Features
+## Why it fits the hackathon theme
 
-### 📊 Executive Dashboard
-- **6 real-time KPI cards** with live Week-over-Week deltas
-- **Multi-dimensional filtering** — City, Category, Room Class, Month, Week
-- **Revenue by Category** — Luxury vs Business donut chart
-- **Weekly Revenue Trend** — Interactive line chart
-- **Weekend vs Weekday** — Performance comparison table
-- **Realisation % & ADR by Platform** — Dual-axis combo chart
-- **City Performance** — Horizontal bar comparison
-- **Weekly Occupancy Trend** — Area chart with time series
-- **Property Performance Table** — All 13 KPIs per hotel
+### ✅ Track 4: Data & Intelligence (Multi-source Intelligence)
+This app directly implements Track 4 focus areas: RAG over proprietary data, analytics agents, AI-powered data pipelines/validation, and knowledge graph extraction from documents. :contentReference[oaicite:1]{index=1}
 
-### 💬 Chat with Your Data (AI Agent)
-- **Natural language queries** — Ask in plain English, get data-driven answers
-- **24 built-in KPI metrics** — Deterministic SQL generation (zero syntax errors)
-- **Complex query support** — Rankings, comparisons, multi-step analysis
-- **Custom SQL fallback** — LLM generates SQL for ad-hoc analytical questions
-- **Suggested starter questions** — One-click query templates
-- **Formatted business answers** — Currency, percentages, actionable insights
+### ⭐ Gemini Award (Best use of Gemini)
+- Gemini-native reasoning + tool orchestration for analytics
+- Gemini-powered document understanding + structured extraction
+- Gemini “Grounding with Google Search” for up-to-date internet benchmarks and citations metadata :contentReference[oaicite:2]{index=2}
 
-### 🔍 KPI Monitoring & Anomaly Detection
-- **4-layer alert system:**
-  - Threshold-based alerts (configurable per KPI)
-  - Week-over-Week drop detection
-  - Consecutive decline detection (3+ week downtrends)
-  - Statistical anomaly detection (z-score across properties)
-- **Property Health Scoring** — 0-100 score per hotel based on weighted KPI performance
-- **Interactive trend analysis** — Select any metric, view with threshold lines
-- **Configurable thresholds** — Adjust warning/critical levels per session
+### 🛡️ Veea Award (Agent Security & AI Governance)
+We integrate **Lobster Trap**, a “deep prompt inspection” layer with firewall-style policy rules, to block prompt injection and unsafe requests before they hit the agent or data tools. :contentReference[oaicite:3]{index=3}
 
 ---
 
-## 🏗️ Architecture
+## Key features
 
-![Architecture Diagram](assets/images/architecture_diagram.png)
-*System architecture — export as PNG from draw.io, Excalidraw, or Lucidchart and save as `assets/images/architecture_diagram.png`*
+### 1) Analytics Agent over Live Enterprise DB (Deterministic + Tool-Called)
+Ask questions like:
+- “Top 5 hotels by revenue in Mumbai”
+- “RevPAR trend by week”
+- “Occupancy by city, weekend vs weekday”
 
-<details>
-<summary>View ASCII version</summary>
+The agent:
+- selects the right KPI tool
+- generates deterministic SQL
+- returns **only** numbers that came from tool outputs (no invented metrics)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     FRONTEND (Streamlit)                            │
-│                                                                     │
-│  ┌──────────────┐  ┌──────────────────┐  ┌───────────────────────┐ │
-│  │  Dashboard    │  │  Chat with Data  │  │  KPI Monitoring       │ │
-│  │  (KPI Cards,  │  │  (Natural Lang   │  │  (Anomaly Detection,  │ │
-│  │   Charts,     │  │   Queries, AI    │  │   Health Scores,      │ │
-│  │   Filters)    │  │   Agent)         │  │   Trend Analysis)     │ │
-│  └──────┬───────┘  └────────┬─────────┘  └──────────┬────────────┘ │
-│         │                   │                        │              │
-└─────────┼───────────────────┼────────────────────────┼──────────────┘
-          │                   │                        │
-          ▼                   ▼                        ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                   METRICS ENGINE (Single Source of Truth)            │
-│                   utils/metrics_engine.py                            │
-│                                                                     │
-│  get_core_metrics() │ get_wow_deltas() │ get_property_table()       │
-│  get_trend_data()   │ get_city_comparison() │ get_platform_perf()   │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                   DETERMINISTIC SQL BUILDER                         │
-│                   tools/tools.py                                    │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────┐      │
-│  │ _METRIC_CONFIG (24 metrics)                               │      │
-│  │ _build_metric_sql() → Perfect SQL every time              │      │
-│  │ _build_wow_sql() → Week-over-Week with window functions   │      │
-│  │ _assemble_cross_table_query() → CTE-based RevPAR          │      │
-│  └──────────────────────────────────────────────────────────┘      │
-│                                                                     │
-│  execute_metric_query()  → Deterministic (95% of queries)          │
-│  execute_custom_sql()    → LLM-generated (complex ad-hoc)          │
-│  get_database_context()  → Live schema introspection               │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-          ┌───────────────────┼───────────────────┐
-          ▼                   │                   ▼
-┌──────────────────┐          │         ┌──────────────────┐
-│   AI AGENT       │          │         │   SUPABASE       │
-│   agents.py      │          │         │   PostgreSQL     │
-│                  │          │         │                  │
-│  LiteLLM +       │          │         │  dim_date        │
-│  Native Function │──────────┘         │  dim_hotels      │
-│  Calling         │                    │  dim_rooms       │
-│                  │                    │  fact_bookings   │
-│  3 Tools:        │───────────────────▶│  fact_aggregated │
-│  calculate_metrics                    │  _bookings       │
-│  run_custom_sql  │                    │                  │
-│  search_metric   │                    │  ETL Pipeline    │
-└──────────────────┘                    │  (CSV→Raw→Clean) │
-                                        └──────────────────┘
-```
+### 2) Document Intelligence + Knowledge Graph
+Upload a PDF (industry report / competitor analysis / benchmark doc) and get:
+- extracted entities (hotels, cities, brands)
+- extracted KPIs/benchmarks
+- relationship graph visualization (knowledge graph)
 
-</details>
+Then ask cross-source questions:
+- “How does our RevPAR compare to the benchmark in the report?”
+- “Which cities show growth potential in the document, and how do we perform there?”
 
-### Why This Architecture?
+### 3) Real-time Internet Grounding (Gemini + Google Search)
+When the PDF doesn’t contain the answer (e.g., “latest benchmark RevPAR in India”), Gemini can automatically use Google Search grounding and return grounding metadata you can surface in UI (queries + sources). :contentReference[oaicite:4]{index=4}
 
-| Design Decision | Rationale |
-|---|---|
-| **Deterministic SQL Builder** | LLMs can write bad SQL. Building SQL programmatically from metric configs eliminates syntax errors for known KPIs. |
-| **Two-path query strategy** | 95% of questions use the reliable builder. Only truly novel questions fall back to LLM-generated SQL. |
-| **Never direct-join fact tables** | `fact_bookings` and `fact_aggregated_bookings` have different granularity. Direct joins cause row multiplication. CTEs handle cross-table metrics. |
-| **Single metrics engine** | Dashboard, agent, and monitoring all use the same SQL builder. Numbers always match. |
-| **Native function calling** | More reliable than text-based ReAct parsing. Structured JSON tool calls work with any LLM. |
-| **Separate ETL pipeline** | Raw → Clean transformation with validation. Business rules (weekend = Fri+Sat) applied at ETL layer. |
+### 4) Agent Security & Governance (Lobster Trap)
+Lobster Trap inspects prompts/outputs with policy rules and can:
+- detect prompt injection patterns
+- block unsafe instructions (exfiltration / “ignore previous instructions”)
+- enforce enterprise-safe guardrails using YAML policy files (default policy path supported) :contentReference[oaicite:5]{index=5}
 
 ---
 
-## 📁 Project Structure
+## System architecture (high-level)
 
-```
-atliq-hospitality/
-│
-├── agents/
-│   ├── __init__.py
-│   └── agents.py              # AI agent with native function calling
-│
-├── assets/
-│   └── images/                # ← Drop your screenshots here
-│       ├── dashboard_overview.png
-│       ├── chat_with_data.png
-│       ├── kpi_monitoring.png
-│       ├── architecture_diagram.png
-│       ├── db_schema_er_diagram.png
-│       └── etl_pipeline_output.png
-│
-├── etl/
-│   └── etl_pipeline.py        # CSV → Raw DB → Clean DB pipeline
-│
-├── frontend/
-│   ├── dashboard.py            # Executive dashboard (main page)
-│   └── pages/
-│       ├── 02_Chat_with_Data.py    # Natural language query interface
-│       └── 03_KPI_Monitoring.py    # Anomaly detection & health scores
-│
-├── prompts/
-│   └── cot_prompts.py          # Chain-of-thought prompt templates
-│
-├── tools/
-│   └── tools.py                # Deterministic SQL builder + execution
-│
-├── utils/
-│   ├── config.py               # Configuration, schema map, metric library
-│   └── metrics_engine.py       # Shared metrics API (single source of truth)
-│
-├── .streamlit/
-│   └── config.toml             # Streamlit theme & server config
-│
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
+```text
+User (Streamlit UI)
+   |
+   |--(A) Analytics Chat ---------------------------.
+   |                                                |
+   |   Gemini (Agent)                               |
+   |    - system prompt w/ DB context               |
+   |    - native function calling (tools)           |
+   |                                                |
+   '-> Tools Layer (Deterministic)                  |
+        - calculate_metrics() -> SQL -> Postgres     |
+        - run_custom_sql()  -> SQL -> Postgres       |
+        - search_metric()                           |
+                                                    |
+   |--(B) Document Intelligence --------------------|
+   |                                                |
+   |   PDF -> text extract -> KG extraction (Gemini) |
+   |        -> entity/relations -> network graph     |
+   |                                                |
+   '-> Cross-source Answering:
+        PDF context + DB metrics + (optional) web grounding
+        via Gemini Google Search tool
+````
 
 ---
 
-## 🚀 Quick Start
+## “What the judges will see” (demo flow)
 
-### Prerequisites
+1. **DB Agent**: Ask “Top 5 hotels by revenue in Mumbai” → tool call → ranked output
+2. **Doc Intelligence**: Upload PDF → knowledge graph renders
+3. **Cross-source**: Ask “How does our RevPAR compare to the benchmark in this report?”
+4. **Real-time**: Ask “What’s the latest industry benchmark for RevPAR in India?”
 
-- Python 3.11+
-- Supabase account (PostgreSQL database)
-- OpenRouter API key (for LLM access)
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/YOUR_USERNAME/atliq-hospitality.git
-cd atliq-hospitality
-pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-
-Create `.env` in project root:
-
-```env
-CLEAN_SUPABASE_DB_URI="postgresql://postgres:PASSWORD@db.XXXXX.supabase.co:5432/postgres"
-OPENROUTER_API_KEY="sk-or-v1-XXXXXXXX"
-```
-
-### 3. Run ETL Pipeline (First Time Only)
-
-```bash
-python etl/etl_pipeline.py
-```
-
-This loads CSV data → Raw DB → transforms → Clean DB with validation.
-
-**Expected output:**
-
-![ETL Pipeline Output](assets/images/etl_pipeline_output.png)
-*Screenshot of a successful ETL run — save your terminal output as `assets/images/etl_pipeline_output.png`*
-
-### 4. Launch Application
-
-```bash
-streamlit run frontend/dashboard.py
-```
-
-Open `http://localhost:8501` in your browser.
+   * Show grounding metadata (search queries + sources) ([Google AI for Developers][1])
+5. **Security**: Try prompt injection (“ignore previous instructions…”) → blocked by policy ([GitHub][2])
 
 ---
 
-## 🗄️ Data Model
+## Tech stack
 
-### Entity Relationship Diagram
-
-![Database Schema — ER Diagram](assets/images/db_schema_er_diagram.png)
-*ER diagram of the Supabase PostgreSQL schema — generate from pgAdmin, DBeaver, or [dbdiagram.io](https://dbdiagram.io)*
-
-### Schema Overview
-
-```
-┌─────────────┐       ┌──────────────┐       ┌─────────────┐
-│  dim_date   │       │  dim_hotels   │       │  dim_rooms  │
-│─────────────│       │──────────────│       │─────────────│
-│ date (PK)   │       │ property_id   │       │ room_id (PK)│
-│ mmm_yy      │       │  (PK)        │       │ room_class  │
-│ week_no     │       │ property_name │       └──────┬──────┘
-│ day_type    │       │ category      │              │
-└──────┬──────┘       │ city          │              │
-       │              └──────┬───────┘              │
-       │                     │                      │
-       ▼                     ▼                      ▼
-┌────────────────────────┐    ┌──────────────────────────────┐
-│ fact_aggregated_       │    │      fact_bookings            │
-│     bookings           │    │──────────────────────────────│
-│────────────────────────│    │ booking_id (PK)              │
-│ property_id (FK)       │    │ property_id (FK)             │
-│ check_in_date (FK)     │    │ booking_date                 │
-│ room_category (FK)     │    │ check_in_date (FK)           │
-│ successful_bookings    │    │ checkout_date                │
-│ capacity               │    │ room_category (FK)           │
-│                        │    │ booking_platform             │
-│ Grain: property +      │    │ booking_status               │
-│   date + room_type     │    │ revenue_generated            │
-│   (for occupancy)      │    │ revenue_realized             │
-└────────────────────────┘    │ ratings_given, no_guests     │
-                              │                              │
-                              │ Grain: individual booking    │
-                              │   (for revenue, ADR, etc.)   │
-                              └──────────────────────────────┘
-```
-
-### Key Business Rules
-
-| Rule | Detail |
-|---|---|
-| **Weekend** | Friday & Saturday (stakeholder-defined, non-standard) |
-| **Weekday** | Sunday through Thursday |
-| **Revenue** | Always use `revenue_realized` (net after cancellation adjustments) |
-| **Cancellation** | Hotel keeps 40% of `revenue_generated`, refunds 60% |
-| **No Show** | Full `revenue_generated` goes to hotel |
-| **Ratings** | `0` means "not rated" — excluded from averages |
-| **week_no** | Stored as TEXT — always quote in SQL: `'31'` not `31` |
-| **Fact table join** | NEVER direct-join both fact tables — different granularity, use CTEs |
-
-### Coverage
-
-| Dimension | Values |
-|---|---|
-| Date Range | May – July 2022 (92 days) |
-| Cities | Delhi, Mumbai, Hyderabad, Bangalore |
-| Hotel Categories | Luxury, Business |
-| Room Classes | Standard, Elite, Premium, Presidential |
-| Booking Platforms | MakeYourTrip, LogTrip, Tripster, Direct Online, Direct Offline, Journey, Others |
-| Booking Status | Checked Out, Cancelled, No Show |
-| Weeks | 19 – 32 |
+* **Frontend:** Streamlit (Hugging Face Space)
+* **LLM:** Gemini (agentic tool-calling + document intelligence + web grounding)
+* **Data:** PostgreSQL analytics dataset (AtliQ Hospitality schema)
+* **Graphs:** NetworkX + Plotly graph rendering
+* **Governance:** Lobster Trap (policy-based prompt inspection) ([GitHub][2])
 
 ---
 
-## 📊 KPI Reference
+## Deployment (Hugging Face Spaces)
 
-### 24 Built-in Metrics
+Hugging Face Spaces reads the **YAML block at the very top of README.md** to configure the app. ([Hugging Face][3])
 
-#### Base Metrics
-| Metric | Formula | Source |
-|---|---|---|
-| Revenue | `SUM(revenue_realized)` | fact_bookings |
-| Total Bookings | `COUNT(booking_id)` | fact_bookings |
-| Total Capacity | `SUM(capacity)` | fact_aggregated_bookings |
-| Total Successful Bookings | `SUM(successful_bookings)` | fact_aggregated_bookings |
-| Average Rating | `AVG(ratings_given) WHERE rating > 0` | fact_bookings |
-| No of Days | `COUNT(DISTINCT date)` | dim_date |
+**Secrets to set in the Space:**
 
-#### Derived KPIs
-| Metric | Formula | Description |
-|---|---|---|
-| **Occupancy %** | Successful Bookings / Capacity × 100 | Room utilization rate |
-| **ADR** | Revenue / Total Bookings | Average revenue per booking |
-| **RevPAR** | Revenue / Capacity | Revenue per available room (cross-table CTE) |
-| **Realisation %** | 1 − (Cancellation% + No Show%) | Booking-to-stay conversion |
-| **Cancellation %** | Cancelled / Total Bookings × 100 | Booking drop-off rate |
-| **No Show Rate** | No Shows / Total Bookings × 100 | Ghost booking rate |
-| **DBRN** | Total Bookings / No of Days | Daily booked room nights |
-| **DSRN** | Total Capacity / No of Days | Daily sellable room nights |
-| **DURN** | Checked Out / No of Days | Daily utilized room nights |
-
-#### Week-over-Week (WoW) Metrics
-| Metric | Calculation |
-|---|---|
-| Revenue WoW | (Current Week / Previous Week) − 1 |
-| Occupancy WoW | Same pattern |
-| ADR WoW | Same pattern |
-| RevPAR WoW | Same pattern (cross-table) |
-| Realisation WoW | Same pattern |
-| DSRN WoW | Same pattern |
-
-#### Breakdown Metrics
-| Metric | Description |
-|---|---|
-| Booking % by Platform | Each platform's share of total bookings |
-| Booking % by Room Class | Each room class's share of total bookings |
+* `GEMINI_API_KEY`
+* any DB connection env vars your app expects
 
 ---
 
-## 🤖 AI Agent — How It Works
+## Credits
 
-### Tool Calling Flow
+* Hackathon: TechEx + lablab.ai — Intelligent Enterprise Solutions Hackathon ([LabLab][4])
+* Security Layer: Veea Lobster Trap ([GitHub][2])
+* Real-time Web Grounding: Gemini Grounding with Google Search ([Google AI for Developers][1])
 
 ```
-User: "What is the RevPAR for luxury hotels in Mumbai?"
-  │
-  ▼
-LLM understands intent
-  │
-  ▼
-LLM calls: calculate_metrics({
-    metrics: ["revpar"],
-    filters: { city: "Mumbai", category: "Luxury" }
-  })
-  │
-  ▼
-Python: _build_metric_sql("revpar", filters)
-  → Generates CTE query (cross-table)
-  → Executes against Supabase
-  → Returns DataFrame
-  │
-  ▼
-LLM receives data, formats business answer:
-  "RevPAR for luxury hotels in Mumbai: ₹10,234
-   This is 15% above the portfolio average..."
+
+If you want, I can tailor this README even more to your exact repo structure by adding:
+- exact page list (Dashboard / Document Intelligence / Security)
+- screenshots placeholders with captions
+- a “Judges: Why this is production-ready” section (observability, policy, reproducibility)
+::contentReference[oaicite:13]{index=13}
 ```
 
-### Three Tools
-
-| Tool | Purpose | Reliability |
-|---|---|---|
-| `calculate_metrics` | 24 built-in KPIs with filters & grouping | ✅ 100% (deterministic SQL) |
-| `run_custom_sql` | Complex ad-hoc queries (rankings, correlations) | ⚠️ 85-95% (LLM-generated SQL) |
-| `search_metric` | Find correct metric name from business concept | ✅ 100% (alias matching) |
-
-### Example Queries the Agent Handles
-
-```
-Simple:     "What is the total revenue?"
-Filtered:   "Occupancy rate for Delhi luxury hotels in week 27"
-Grouped:    "Revenue breakdown by city"
-Comparison: "Weekend vs weekday ADR"
-WoW:        "How did RevPAR change week over week for week 31?"
-Ranking:    "Top 5 hotels by revenue in Mumbai"
-Complex:    "For each city, identify the hotel with lowest RevPAR
-             in week 27, show the gap to city average"
-```
-
----
-
-## 🔍 Anomaly Detection System
-
-### 4-Layer Alert Engine
-
-```
-Layer 1: THRESHOLD ALERTS
-  └─ Each KPI checked against configurable warning/critical levels
-     Example: Occupancy < 45% → 🔴 Critical
-
-Layer 2: WEEK-OVER-WEEK ALERTS
-  └─ Detects significant WoW drops
-     Example: Revenue dropped -12% WoW → 🔴 Critical
-
-Layer 3: TREND ALERTS
-  └─ Detects consecutive declining weeks
-     Example: ADR declined 4 weeks straight → 🔴 Critical
-
-Layer 4: PROPERTY ANOMALY DETECTION (Z-Score)
-  └─ Flags properties deviating from portfolio mean
-     Example: Hotel X occupancy z-score = -2.3 → 🔴 Critical
-```
-
-### Property Health Scoring
-
-```
-Score = Weighted average of normalized KPI performance
-
-Weights:
-  Occupancy %    → 25%
-  RevPAR         → 25%
-  Avg Rating     → 20%
-  ADR            → 15%
-  Realisation %  → 15%
-
-Score ≥ 80 → 🟢 Healthy
-Score 60-79 → 🟡 Concern
-Score < 60  → 🔴 Critical
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Component | Technology |
-|---|---|
-| **Frontend** | Streamlit 1.30+ |
-| **Visualization** | Plotly (interactive charts) |
-| **Database** | Supabase (managed PostgreSQL) |
-| **ETL** | Python + pandas + psycopg2 |
-| **AI/LLM** | LiteLLM + OpenRouter (model-agnostic) |
-| **LLM Model** | Grok 4.1 Fast (swappable) |
-| **SQL Builder** | Custom deterministic engine |
-| **Deployment** | Streamlit Community Cloud |
-| **Version Control** | Git + GitHub |
-
----
-
-## 🔒 Security
-
-- Database credentials stored as environment secrets (never in code)
-- Streamlit Cloud secrets encrypted at rest
-- Read-only database user recommended for production
-- SQL injection prevention: parameterized queries + SELECT/WITH-only enforcement
-- Both fact tables direct-join blocked to prevent data corruption
-
----
-
-## 📈 Performance
-
-| Metric | Value |
-|---|---|
-| KPI card load time | ~2-3 seconds (6 metrics × individual queries) |
-| Agent response time | 3-8 seconds (depends on query complexity) |
-| Dashboard full render | ~5 seconds (with caching) |
-| Cache TTL | 60 seconds (metrics), 300 seconds (context) |
-| Max agent iterations | 5 tool calls per question |
-| Supported concurrent users | Limited by Streamlit Cloud free tier |
-
----
-
-## 🧪 Testing & Validation
-
-All KPI calculations verified against a Power BI dashboard built on the same dataset.
-
-| Test Category | Queries Tested | Pass Rate |
-|---|---|---|
-| Single KPI (no filter) | 24 | 100% |
-| Single KPI + filters | 50+ | 100% |
-| Multi-metric grouped | 30+ | 100% |
-| WoW calculations | 12 | 100% |
-| Cross-table (RevPAR) | 15 | 100% |
-| Complex rankings (LLM SQL) | 10 | ~85% |
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Conversation memory for multi-turn chat
-- [ ] SQL validation layer for LLM-generated queries
-- [ ] Export query results as CSV/Excel
-- [ ] Scheduled KPI monitoring with email alerts
-- [ ] LLM fallback chain (try multiple models)
-- [ ] Query logging and analytics
-- [ ] Role-based access control
-- [ ] Mobile-responsive dashboard
-
-
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">
-  Built with ❤️ for data-driven hospitality management
-</p>
+[1]: https://ai.google.dev/gemini-api/docs/google-search?utm_source=chatgpt.com "Grounding with Google Search - generateContent API"
+[2]: https://github.com/veeainc/lobstertrap/blob/main/README.md?utm_source=chatgpt.com "README.md - veeainc/lobstertrap"
+[3]: https://huggingface.co/docs/hub/spaces-config-reference?utm_source=chatgpt.com "Spaces Configuration Reference"
+[4]: https://lablab.ai/ai-hackathons/techex-intelligent-enterprise-solutions-hackathon?utm_source=chatgpt.com "Transforming Enterprise Through AI AI Hackathon"
