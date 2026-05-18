@@ -35,14 +35,20 @@ from utils.metrics_engine import (
 # PAGE CONFIG
 # ════════════════════════════════════════════════
 
-st.set_page_config(
-    page_title="AtliQ Hospitality Dashboard",
-    page_icon="🏨",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
 # Custom CSS for better KPI cards
+try:
+    st.set_page_config(
+        page_title="AtliQ Hospitality Dashboard",
+        page_icon="🏨",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+except Exception:
+    # set_page_config can only be called once per session.
+    # If a sub-page already triggered Streamlit, swallow the error
+    # so the rest of the dashboard still renders.
+    pass
+
 st.markdown("""
 <style>
     [data-testid="stMetricValue"] { font-size: 1.8rem; }

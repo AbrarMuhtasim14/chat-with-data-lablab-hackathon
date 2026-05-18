@@ -9,13 +9,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
-
-st.set_page_config(
-    page_title="Document Intelligence — AtliQ",
-    page_icon="📄",
-    layout="wide",
-)
-
 import pandas as pd
 import plotly.graph_objects as go
 import networkx as nx

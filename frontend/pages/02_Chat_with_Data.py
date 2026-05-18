@@ -21,12 +21,6 @@ Features:
 import streamlit as st
 from agents.agents import query_data_agent
 
-st.set_page_config(
-    page_title="Chat with Data — AtliQ",
-    page_icon="💬",
-    layout="wide",
-)
-
 
 # ════════════════════════════════════════════════
 # PAGE CONFIG
