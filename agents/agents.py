@@ -460,6 +460,8 @@ def query_data_agent(question: str) -> str:
     try:
         # ── Security Check (Lobster Trap) ──
         security_check = _lobster_trap_inspect(question)
+        _log(f"\n🔒 LobsterTrap verdict: is_safe={security_check['is_safe']} "
+             f"score={security_check['risk_score']} reason={security_check['reason'][:200]}")
         if not security_check['is_safe']:
             _log(f"\n🔒 BLOCKED by Lobster Trap: {security_check['reason']}")
             return (

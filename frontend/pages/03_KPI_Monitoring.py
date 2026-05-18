@@ -127,21 +127,34 @@ DEFAULT_THRESHOLDS = {
 
 @st.cache_data(ttl=120)
 def load_monitoring_data():
+    from concurrent.futures import ThreadPoolExecutor
+
     ctx = get_db_context()
     if "error" in ctx:
         return None, None, None, None, ctx
     latest_week = ctx.get("latest_full_week")
-    overall = get_core_metrics()
-    wow = get_all_wow_deltas(latest_week) if latest_week else {}
-    prop_table = get_property_table()
-    trend_metrics = ["revenue", "occupancy_pct", "adr", "revpar", "realisation_pct"]
-    trends = {}
-    for m in trend_metrics:
-        df = get_trend_data(m)
-        if df is not None and not df.empty:
-            df["week_sort"] = df["week_no"].astype(int)
-            df = df.sort_values("week_sort")
-            trends[m] = df
+
+    # Run the four heavy fetches in parallel.
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        f_overall = pool.submit(get_core_metrics)
+        f_wow = pool.submit(get_all_wow_deltas, latest_week) if latest_week else None
+        f_prop = pool.submit(get_property_table)
+
+        trend_metrics = ["revenue", "occupancy_pct", "adr", "revpar", "realisation_pct"]
+        f_trends = {m: pool.submit(get_trend_data, m) for m in trend_metrics}
+
+        overall = f_overall.result()
+        wow = f_wow.result() if f_wow else {}
+        prop_table = f_prop.result()
+
+        trends = {}
+        for m, fut in f_trends.items():
+            df = fut.result()
+            if df is not None and not df.empty:
+                df["week_sort"] = df["week_no"].astype(int)
+                df = df.sort_values("week_sort")
+                trends[m] = df
+
     return overall, wow, prop_table, trends, ctx
 
 

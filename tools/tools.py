@@ -37,7 +37,13 @@ def _get_engine() -> Engine:
             uri = uri.replace("postgres://", "postgresql+psycopg2://", 1)
         elif uri.startswith("postgresql://"):
             uri = uri.replace("postgresql://", "postgresql+psycopg2://", 1)
-        _engine = create_engine(uri, pool_pre_ping=True, pool_size=2, max_overflow=3)
+        _engine = create_engine(
+            uri,
+            pool_pre_ping=True,
+            pool_size=8,
+            max_overflow=8,
+            pool_recycle=300,
+        )
     return _engine
 
 

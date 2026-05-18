@@ -12,6 +12,7 @@ Same formulas → same SQL → same numbers everywhere.
 """
 
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 from tools.tools import (
     execute_metric_query,
     execute_custom_sql,
@@ -116,11 +117,13 @@ def get_core_metrics(filters=None):
         print(f"Occupancy: {m['occupancy_pct']:.1f}%")
     """
     filters = filters or {}
-    result = {}
-    for metric in CORE_METRICS:
+
+    def _run(metric):
         df, _ = execute_metric_query(metric, dict(filters))
-        result[metric] = _safe_scalar(df)
-    return result
+        return metric, _safe_scalar(df)
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        return dict(pool.map(_run, CORE_METRICS))
 
 
 # ════════════════════════════════════════════════
@@ -163,7 +166,11 @@ def get_all_wow_deltas(current_week, filters=None):
     Returns:
         dict: {'revenue': '+5.2%', 'occupancy': '-1.3%', 'adr': '+2.0%', ...}
     """
-    return {key: get_wow_delta(key, current_week, filters) for key in _WOW_KEYS}
+    def _run(key):
+        return key, get_wow_delta(key, current_week, filters)
+
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        return dict(pool.map(_run, _WOW_KEYS))
 
 
 # ════════════════════════════════════════════════
