@@ -10,7 +10,35 @@ Two layers:
 import pandas as pd
 import psycopg2
 import re
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from utils.config import CLEAN_DB_URI, METRIC_LIBRARY
+
+
+# ════════════════════════════════════════════════════════════════
+# SHARED SQLAlchemy ENGINE (pandas 2.2+ requires this; raw psycopg2
+# connections raise warnings/errors in pd.read_sql).
+# ════════════════════════════════════════════════════════════════
+
+_engine: Engine | None = None
+
+
+def _get_engine() -> Engine:
+    """Lazily build a single SQLAlchemy engine for the lifetime of the process."""
+    global _engine
+    if _engine is None:
+        if not CLEAN_DB_URI:
+            raise RuntimeError(
+                "CLEAN_SUPABASE_DB_URI is not set. "
+                "Add it as a secret in HF Space settings or in .env locally."
+            )
+        uri = CLEAN_DB_URI
+        if uri.startswith("postgres://"):
+            uri = uri.replace("postgres://", "postgresql+psycopg2://", 1)
+        elif uri.startswith("postgresql://"):
+            uri = uri.replace("postgresql://", "postgresql+psycopg2://", 1)
+        _engine = create_engine(uri, pool_pre_ping=True, pool_size=2, max_overflow=3)
+    return _engine
 
 
 # ════════════════════════════════════════════════════════════════
@@ -418,9 +446,7 @@ def execute_metric_query(metric_name, filters=None, group_by=None):
         return None, f"Could not build SQL for '{metric_name}'"
 
     try:
-        conn = psycopg2.connect(CLEAN_DB_URI)
-        df = pd.read_sql(sql, conn)
-        conn.close()
+        df = pd.read_sql(sql, _get_engine())
         return df, sql
     except Exception as e:
         return None, f"SQL Error: {str(e)}\nSQL: {sql}"
@@ -468,9 +494,7 @@ def execute_custom_sql(sql_query):
         return None, "BLOCKED: Both fact tables without CTEs. Use execute_metric_query('revpar', ...) instead."
 
     try:
-        conn = psycopg2.connect(CLEAN_DB_URI)
-        df = pd.read_sql(sql_query, conn)
-        conn.close()
+        df = pd.read_sql(sql_query, _get_engine())
         return df, None
     except Exception as e:
         return None, f"SQL Error: {str(e)}"
@@ -479,18 +503,16 @@ def execute_custom_sql(sql_query):
 def get_database_context():
     """Direct Python function to get DB context."""
     try:
-        conn = psycopg2.connect(CLEAN_DB_URI)
+        engine = _get_engine()
 
         weeks = pd.read_sql(
-            "SELECT week_no, COUNT(*) as days FROM dim_date GROUP BY week_no ORDER BY week_no::int", conn
+            "SELECT week_no, COUNT(*) as days FROM dim_date GROUP BY week_no ORDER BY week_no::int", engine
         )
-        cities = pd.read_sql("SELECT DISTINCT city FROM dim_hotels ORDER BY city", conn)['city'].tolist()
-        properties = pd.read_sql("SELECT property_id, property_name, category, city FROM dim_hotels ORDER BY property_name", conn)
-        platforms = pd.read_sql("SELECT DISTINCT booking_platform FROM fact_bookings ORDER BY booking_platform", conn)['booking_platform'].tolist()
-        rooms = pd.read_sql("SELECT room_id, room_class FROM dim_rooms ORDER BY room_id", conn)
-        date_range = pd.read_sql("SELECT MIN(date) as start_date, MAX(date) as end_date FROM dim_date", conn).iloc[0]
-
-        conn.close()
+        cities = pd.read_sql("SELECT DISTINCT city FROM dim_hotels ORDER BY city", engine)['city'].tolist()
+        properties = pd.read_sql("SELECT property_id, property_name, category, city FROM dim_hotels ORDER BY property_name", engine)
+        platforms = pd.read_sql("SELECT DISTINCT booking_platform FROM fact_bookings ORDER BY booking_platform", engine)['booking_platform'].tolist()
+        rooms = pd.read_sql("SELECT room_id, room_class FROM dim_rooms ORDER BY room_id", engine)
+        date_range = pd.read_sql("SELECT MIN(date) as start_date, MAX(date) as end_date FROM dim_date", engine).iloc[0]
 
         latest_week = weeks.iloc[-1]['week_no']
         full_weeks = weeks[weeks['days'] >= 7]

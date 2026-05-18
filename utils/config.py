@@ -25,17 +25,22 @@ def _load_env():
 
 _load_env()
 
-# Try Streamlit secrets first (for cloud deployment), 
-# then fall back to env vars (for local development)
+# Try environment variables FIRST (works on HF Spaces, local .env, and Codespaces),
+# then fall back to Streamlit secrets (Streamlit Cloud only).
+# Reading st.secrets at import time can interfere with set_page_config on multipage apps,
+# so it is only consulted when env vars are unset.
 def _get_secret(key):
-    """Get secret from Streamlit secrets (cloud) or env vars (local)."""
+    """Get secret from env vars first; fall back to Streamlit secrets if available."""
+    val = os.getenv(key)
+    if val:
+        return val
     try:
-        import streamlit as st
+        import streamlit as st  # noqa: WPS433
         if hasattr(st, "secrets") and key in st.secrets:
             return st.secrets[key]
     except Exception:
         pass
-    return os.getenv(key)
+    return None
 
 # ════════════════════════════════════════════════
 # CONNECTION & LLM CONFIG
