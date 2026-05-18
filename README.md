@@ -153,16 +153,6 @@ User (Streamlit UI)
 
 Hugging Face Spaces reads the **YAML block at the very top of this README** to configure the app.
 
-**Secrets to set in the Space:**
-
-```
-GEMINI_API_KEY=your_key_here
-DB_HOST=...
-DB_PORT=...
-DB_NAME=...
-DB_USER=...
-DB_PASSWORD=...
-```
 
 ---
 
